@@ -1,0 +1,101 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(knitr)
+library(rvest)
+library(ggplot2)   
+library(tidyverse)
+library(dplyr)
+library(spotifyr)
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Músicas mais ouvidas
+
+```{r echo=FALSE}
+
+url_charts <- read_html("https://www.billboard.com/charts/hot-100/") %>% 
+  html_nodes(".o-chart-results-list-row-container")
+
+#artistas e semanas
+dados <- url_charts %>% 
+  html_nodes("span") %>% 
+  html_text()
+dados <-  gsub("\n","",dados)
+dados <-  gsub("\t","",dados)
+dados <- dados[c(2,20,36,52,68,86,102,118,134,150,168,184,200,216,232,
+                 5,23,39,55,71,89,105,121,137,153,171,187,203,219,235)]
+
+
+
+#Os nomes dos 15 primeiros artistas
+artista <- dados
+artista <- artista[1:15]
+
+
+#Capa da musica
+imagem <- url_charts %>% 
+  html_elements("img") %>% 
+  html_attr("src")
+
+
+#Nome das 15 músicas
+musica <- url_charts %>% 
+  html_elements("#title-of-a-story") %>%
+  html_text()
+musica <-  gsub("\n","",musica)
+musica <-  gsub("\t","",musica)
+musica <- musica[c(1,5,9,13,17,21,25,29,33,37,41,45,49,53,57)]
+
+
+#Semanas que a música ta nos charts
+semanas <- dados
+semanas <- semanas[16:30]
+
+#data frame
+charts <- data.frame(artista, musica, semanas)
+charts
+
+
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Artistas mais ouvidos
+
+```{r echo=FALSE}
+
+
+url_artistas <- read_html("https://www.billboard.com/charts/artist-100/") %>% 
+  html_nodes(".o-chart-results-list-row-container")
+
+Artistas <- url_artistas %>% 
+  html_nodes("h3#title-of-a-story") %>% 
+  html_text()
+Artistas <- gsub("\n","", Artistas)
+Artistas <- gsub("\t","", Artistas)
+Artistas <- Artistas[c(1,3,5,7,9,11,13,15,17,19)]
+
+
+Semanas <- url_artistas %>% 
+  html_nodes("span.c-label") %>% 
+  html_text()
+Semanas <- gsub("\n","", Semanas)
+Semanas <- gsub("\t","", Semanas)
+Semanas <- Semanas[c(4,11,18,28,32,41,48,55,65,69)]
+
+
+Chart <- data.frame(Artistas, Semanas)
+Chart
+```
+
