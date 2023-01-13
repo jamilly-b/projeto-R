@@ -1,0 +1,93 @@
+---
+title: "Linguagens de programação mais utilizadas"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(ggplot2)   
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(lubridate)
+library(tidyr)
+library(gganimate)
+```
+
+Comandos {.sidebar}
+-----------------------------------------------------------------------
+```{r}
+ 
+
+
+```
+
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+# Gráfico
+
+```{r}
+tabela <- read_csv("Linguagens_Mais_Populares.csv")
+
+datas <- my(tabela$Date)
+
+
+renderTable({
+  tabela %>% 
+    filter(linguagens == -input$Date)
+})
+
+renderPlot({
+  ggplot(tabela) +
+    aes(
+      x = datas,
+      y = linguagens,
+      color = Species
+      ) + 
+    geom_point()
+  
+})
+
+
+
+
+linguagens <- tabela %>% 
+  select(-Date)
+
+ggplot() +
+  geom_line(tabela, mapping = aes(x = datas,y = Java), color = '#2F4F4F')+
+  geom_line(tabela, mapping = aes(x = datas,y = PHP), color = '#6B238E')+
+  geom_line(tabela, mapping = aes(x = datas,y = Python), color = '#007FFF')+
+  geom_line(tabela, mapping = aes(x = datas,y = `C/C++`), color = '#FF1CAE')+
+  geom_line(tabela, mapping = aes(x = datas,y = JavaScript), color = '#FF7F00')+
+  geom_line(tabela, mapping = aes(x = datas,y = `C#`), color = '#000066')+
+  geom_line(tabela, mapping = aes(x = datas,y = `Visual Basic`), color = '#00CC00')+
+  geom_line(tabela, mapping = aes(x = datas,y = `Objective-C`), color = '#CC0000')+
+  geom_line(tabela, mapping = aes(x = datas,y = Perl), color = '#FFFF00') +
+  geom_line(tabela, mapping = aes(x = datas,y = Matlab), color = '#66FFFF')
+  
+
+
+
+
+```
+Column {data-width=650}
+----
+```{r}
+
+ggplot() +
+  geom_bar(
+    aes(
+      x = Date,
+      y = Python))+
+  theme_bw() +
+  transition_reveal(along = datas)
+
+
+```
