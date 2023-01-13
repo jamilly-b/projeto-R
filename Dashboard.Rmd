@@ -9,20 +9,22 @@ output:
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(shiny)
-library(ggplot2)   
+library(ggplot2)
+library(plotly)
+library(ddplot)
+library(gapminder)
 library(tidyverse)
 library(dplyr)
 library(readr)
 library(lubridate)
 library(tidyr)
-library(gganimate)
 ```
 
 
-Column {data-width=500}
+Column {data-width=650}
 -----------------------------------------------------------------------
 
-### Gráfico
+### Estático
 
 ```{r}
 
@@ -32,27 +34,33 @@ tabela <- pivot_longer(tabela, 2:29, names_to = "Linguagens", values_to = "Perce
 
 datas <- my(tabela$Date)
 
-ggplot(tabela) +
+linha <- ggplot(tabela) +
   aes(
     x = datas,
     y = Percentual,
     color = Linguagens) + 
   geom_line()
 
+g <- ggplotly(linha)
+g
+
 ```
 
 
-Column {data-width=500}
+Column {data-width=300}
 ----
 
-### Grafico 2
+### Animação
 
 ```{r}
 
 tabela %>% 
-  group_by(Linguagens) %>% 
-  ggplot(aes(x = Linguagens, y = Percentual)) +
-  geom_bar(stat = "identity") +
-  coord_flip()
+  barChartRace(
+    x = "Percentual", 
+    y = "Linguagens",
+    time = "Date",
+    title = "Popularidade das linguagens com o passar do tempo",
+    frameDur = 1
+  )
 
 ```
