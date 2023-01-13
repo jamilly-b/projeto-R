@@ -20,35 +20,37 @@ library(lubridate)
 library(tidyr)
 ```
 
-
-Column {data-width=650}
------------------------------------------------------------------------
-
-### Estático
-
 ```{r}
-
 tabela <- read_csv("Linguagens_Mais_Populares.csv")
 
 tabela <- pivot_longer(tabela, 2:29, names_to = "Linguagens", values_to = "Percentual")
 
 datas <- my(tabela$Date)
 
-linha <- ggplot(tabela) +
-  aes(
-    x = datas,
-    y = Percentual,
-    color = Linguagens) + 
-  geom_line()
+```
 
-g <- ggplotly(linha)
-g
+Column {.sidebar}
+-----------------------------------------------------------------------
 
+```{r}
+selectInput("Linguagem1", label = "Linguagem 1", choices = unique(tabela$Linguagens))
+selectInput("Linguagem2", label = "Linguagem 2", choices = unique(tabela$Linguagens))
 ```
 
 
-Column {data-width=300}
-----
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Comparação
+
+
+```{r}
+
+#ggplot(tabela, aes(x = Date, y = Percentual) +
+#         geom_line(aes(color = input$Linguagem1))+
+#        geom_line(aes(color = input$Linguagem1))
+
+```
 
 ### Animação
 
@@ -62,5 +64,27 @@ tabela %>%
     title = "Popularidade das linguagens com o passar do tempo",
     frameDur = 1
   )
+
+```
+
+
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Estático
+
+```{r}
+
+linha <- ggplot(tabela) +
+  aes(
+    x = datas,
+    y = Percentual,
+    color = Linguagens) + 
+  geom_line()
+
+g <- ggplotly(linha)
+g
 
 ```
