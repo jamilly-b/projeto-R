@@ -4,6 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
+runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
@@ -45,10 +46,13 @@ Column {data-width=400}
 
 
 ```{r}
-
-#ggplot(tabela, aes(x = Date, y = Percentual) +
-#         geom_line(aes(color = input$Linguagem1))+
-#        geom_line(aes(color = input$Linguagem1))
+renderPlot({
+      cbind(tabela,datas) %>%
+        filter(Linguagens %in% c(input$Linguagem1, input$Linguagem2)) %>% 
+        ggplot() +
+        aes(x = datas, y = Percentual, color = Linguagens) +
+        geom_line()
+})
 
 ```
 
@@ -88,3 +92,4 @@ g <- ggplotly(linha)
 g
 
 ```
+
